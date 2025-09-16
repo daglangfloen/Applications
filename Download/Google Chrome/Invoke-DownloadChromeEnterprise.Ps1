@@ -7,7 +7,6 @@
     FileName:    Invoke-DownloadChromeEnterprise.Ps1
     Version:     1.0.0
     Author:      Dag Langfloen
-    Created:     2024-12-27
 #>
 
 # DownloadFolder
