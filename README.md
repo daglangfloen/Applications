@@ -1,2 +1,2 @@
 # Applications
-Applications realted repo
+Applications related repo
