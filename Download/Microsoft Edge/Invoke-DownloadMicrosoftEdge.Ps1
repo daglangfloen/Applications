@@ -23,7 +23,6 @@ $latestStable = $versionInfo | Where-Object { $_.Product -eq "Stable" } | Select
 
 # get the windows x64 version from the latest stable
 $latestWindowsStable = $latestStable | Where-Object { $_.Platform -eq "Windows" -and $_.Architecture -eq "x64" } | Select-Object -First 1
-
 $LatestVersion = $latestWindowsStable.ProductVersion
 Write-Output "Latest Stable Edge Version: $LatestVersion"
 
@@ -36,6 +35,7 @@ If (!(Test-Path $VersionFolder)) {
 # Download the installer
 $InstallerName = "MicrosoftEdgeEnterpriseX64.msi"   
 $DownloadPath = Join-Path $VersionFolder $InstallerName
+
 # Check if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
     Remove-Item $DownloadPath -Force

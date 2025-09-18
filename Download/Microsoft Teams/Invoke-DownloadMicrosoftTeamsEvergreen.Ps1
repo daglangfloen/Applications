@@ -23,6 +23,12 @@ $TeamsUrl = "https://go.microsoft.com/fwlink/?linkid=2243204"
 $TeamsInstaller = "MSTeamsSetup.exe"
 $TeamsPath = Join-Path $DownloadFolder $TeamsInstaller
 
+# Check if file already exists and delete if it does
+If (Test-Path $TeamsPath) {
+    Remove-Item $TeamsPath -Force
+}
+
+# Download the installer
 Invoke-WebRequest -Uri $TeamsUrl -OutFile $TeamsPath
 
 # Get version info from the downloaded installer
