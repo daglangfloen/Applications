@@ -8,16 +8,32 @@
     The script is based on Patch My Pcs origial script: https://patchmypc.com/powershell-app-deployment-toolkit-download-script
 .NOTES
     FileName:    Invoke-DownloadLatestPSADT.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
+    Curent version: 1.0.0
+    Version:        1.0.0 - Initial version
+                    1.0.1 - Changed folder structure to support Developer, and some error handling
+    
 
 #>
 
+# Folders
+$ApplicationFolderName = "Applications"
+$ApplicationName = "PSAppDeployToolkit"
+$SystemDrive = $env:SystemDrive
+
 # Downloadfolder for PSADT
-$DownloadFolder = "C:\Applications\PSAppDeployToolkit"
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $ApplicationName
+
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {
-    New-Item -Path $DownloadFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $DownloadFolder"
+        $Error
+    }
+    
 }
 
 # Get the latest release info from GitHub API
@@ -35,12 +51,26 @@ Write-Output "Latest PSADT Version: $latestVersion"
 # Create a folder with the version number
 $VersionFolder = Join-Path $DownloadFolder $latestVersion
 If (!(Test-Path $VersionFolder)) {
-    New-Item -Path $DownloadFolder -Name $latestVersion -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -Name $latestVersion -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $VersionFolder"
+        $Error
+    }
+    
 }
 
 # If the version folder already exists, delete the content
 If (Test-Path $VersionFolder) {
-    Remove-Item -Path (Join-Path $VersionFolder "*") -Recurse -Force
+    try {
+        Remove-Item -Path (Join-Path $VersionFolder "*") -Recurse -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting content in folder: $VersionFolder"
+        $Error
+    }
+    
 }
 
 # Download path
@@ -48,22 +78,34 @@ $DownloadPath = Join-Path $DownloadFolder $filenamePatternMatch
 
 # Check if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
-    Remove-Item $DownloadPath -Force
-}
-
-# Check if file already exists and delete if it does
-If (Test-Path $DownloadPath) {
-    Remove-Item $DownloadPath -Force
+    try {
+        Remove-Item $DownloadPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $DownloadPath"
+        $Error
+    }
+    
 }
 
 ## Download to the file
-Invoke-WebRequest -Uri $psadtDownloadUri -Out $DownloadPath
-## Remove any Zone.Identifier alternate data streams to unblock the file (if required)
+try {
+    Invoke-WebRequest -Uri $psadtDownloadUri -Out $DownloadPath -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error downloading PSADT from: $psadtDownloadUri" -ForegroundColor Red
+    $Error
+}
 
 # Unblock the downloaded file
 Unblock-File -Path $DownloadPath
 
 ## Extract the contents of the zip file to a subfolder under the current user's Downloads folder
-Expand-Archive -Path $DownloadPath -DestinationPath $VersionFolder -Force
-
+try {
+    Expand-Archive -Path $DownloadPath -DestinationPath $VersionFolder -Force -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error extracting PSADT zip file: $DownloadPath" -ForegroundColor Red
+    $Error
+}
 Write-Host ("File: {0} extracted to Path: {1}" -f $psadtDownloadUri, $VersionFolder) -ForegroundColor Green

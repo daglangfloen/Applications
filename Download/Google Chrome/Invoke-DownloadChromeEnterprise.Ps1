@@ -5,13 +5,19 @@
     This script downloads the latest version of Google Chrome Enterprise and saves it to a specified Directory
 .NOTES
     FileName:    Invoke-DownloadChromeEnterprise.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
+    Version:     1.0.0
+    
 #>
 
-# DownloadFolder
-$DownloadFolder = "C:\Applications\Google Chrome Enterprise"
+# File and Folders
 $Application = "GoogleChromeStandaloneEnterprise64.msi"
+$ApplicationFolderName = "Applications"
+$Developer = "Google"
+$ApplicationName = "Google Chrome Enterprise"
+$SystemDrive = $env:SystemDrive
+# DownloadFolder
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 $DownloadPath = Join-Path $DownloadFolder $Application
 
 # URL to download the MSI installer
@@ -21,7 +27,7 @@ $DownlloadUrl = "https://dl.google.com/edgedl/chrome/install/$application"
 If (!(Test-Path $DownloadFolder))
 {
     try {
-        New-Item -Path "C:\Applications" -Name "Google Chrome Enterprise" -ItemType Directory -ErrorAction Stop
+        New-Item -Path $DownloadFolder -ItemType Directory | Out-Null -ErrorAction Stop
     }
     catch {
         $Error
@@ -30,11 +36,25 @@ If (!(Test-Path $DownloadFolder))
 
 # Check if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
-    Remove-Item $DownloadPath -Force
+    try {
+        Remove-Item $DownloadPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $DownloadPath" -ForegroundColor Red
+        $Error
+    }
+    
 }
 
 # Download the MSI installer (if not already downloaded)
-Invoke-WebRequest -Uri $DownlloadUrl -OutFile $DownloadPath
+try {
+    Invoke-WebRequest -Uri $DownlloadUrl -OutFile $DownloadPath -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error downloading Google Chrome Enterprise from: $DownlloadUrl" -ForegroundColor Red
+    $Error
+}
+
 Write-Host "Downloaded to: $DownloadPath"
 
 # Get the version from the MSI metadata
@@ -46,7 +66,7 @@ $subject = $folder.GetDetailsOf($file, 24)
 $versionRegex = "\d+(.\d+){2,3}"
 $version = ($subject | Select-String -Pattern $versionRegex).Matches.Value
 
-Write-Host "Version: $version"
+Write-Host "Version: $version" -ForegroundColor Green
 
 # Create subfolder for the version and move the file there
 $VersionFolder = Join-Path $DownloadFolder $version
@@ -63,7 +83,22 @@ $NewDownloadPath = Join-Path $VersionFolder $Application
 
 # If the file already exists in the version folder, remove it
 If (Test-Path $NewDownloadPath) {
-    Remove-Item $NewDownloadPath -Force
+    try {
+        Remove-Item $NewDownloadPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $NewDownloadPath" -ForegroundColor Red
+        $Error
+    }
+    
 }
+
 # Now move the file
-Move-Item -Path $DownloadPath -Destination $NewDownloadPath -Force
+try {
+    Move-Item -Path $DownloadPath -Destination $NewDownloadPath -Force -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error moving file to: $NewDownloadPath" -ForegroundColor Red
+    $Error
+}
+Write-Host "Application: $ApplicationName Moved to: $NewDownloadPath" -ForegroundColor Green

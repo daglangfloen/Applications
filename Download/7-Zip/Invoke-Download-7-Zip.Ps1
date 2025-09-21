@@ -5,19 +5,26 @@
     This script downloads the latest version of 7-Zip and saves it to a specified directory
 .NOTES
     FileName:    Invoke-Download-7-Zip.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
+    Curent version: 1.0.1
+    Version:        1.0.0 - Initial version
+                    1.0.1 - Fixed Changed folder structure    
 
 #>
 
+# Folders 
+$ApplicationFolderName = "Applications"
+$ApplicationName = "7-Zip"
+$SystemDrive = $env:SystemDrive
 # DownloadFolder
-$DownloadFolder = "C:\Applications\7-Zip"
+$ApplicationFolderPath = Join-Path $SystemDrive -ChildPath $ApplicationFolderName
+$DownloadFolder = Join-Path $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $ApplicationName
 
 # Create the folder if it doesn't exist
 If (!(Test-Path $DownloadFolder))
 {
     try {
-        New-Item -Path "C:\Applications" -Name "7-Zip" -ItemType Directory -ErrorAction Stop
+        New-Item -Path $ApplicationFolderPath -Name $ApplicationName -ItemType Directory -ErrorAction Stop
     }
     catch {
         $Error

@@ -5,16 +5,35 @@
     This script downloads the latest version of Microsoft Edge Enterprise and saves it to a specified directory.
 .NOTES
     FileName:    Invoke-DownloadMicrosoftEdge.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
+    Current version: 1.0.2
+    Version:         1.0.0  - Initial version
+                     1.0.1     - Changed folder structure
+                     1.0.2     - Added error handling
+    
 #>
 
+# File and Folders
+$Application = "MicrosoftEdgeEnterpriseX64.msi"
+$ApplicationFolderName = "Applications"
+$Developer = "Microsoft Corporation"
+$ApplicationName = "Microsoft Edge"
+$Channel = "Stable"
+$SystemDrive = $env:SystemDrive
+
 # Downloadfolder for Microsoft Edge
-$DownloadFolder = "C:\Applications\Microsoft Edge"
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {
-    New-Item -Path $DownloadFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $DownloadFolder"
+        $Error
+    }
+    
 }
 
 # Get the latest version of Microsoft Edge Enterprise
@@ -29,18 +48,37 @@ Write-Output "Latest Stable Edge Version: $LatestVersion"
 # Version folder
 $VersionFolder = Join-Path $DownloadFolder $LatestVersion 
 If (!(Test-Path $VersionFolder)) {
-    New-Item -Path $VersionFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $VersionFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $VersionFolder"
+        $Error
+    }
+    
 }
 
-# Download the installer
-$InstallerName = "MicrosoftEdgeEnterpriseX64.msi"   
-$DownloadPath = Join-Path $VersionFolder $InstallerName
+$DownloadPath = Join-Path $VersionFolder $Application
 
 # Check if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
-    Remove-Item $DownloadPath -Force
+    try {
+        Remove-Item $DownloadPath -Force -ErrorAction Stop
+    }
+    catch {
+        Write-Host "Error deleting file: $DownloadPath"
+        $Error  
+    }
+    
 }
 
 # Download URL for the installer
 $edgeUrl = $latestWindowsStable.Artifacts | Select-Object -ExpandProperty Location # "https://msedgedownloads.azureedge.net/enterprise/LATEST_STABLE/msedgeenterprise_x64.msi"
-Invoke-WebRequest -Uri $edgeUrl -OutFile $DownloadPath  
+try {
+    Invoke-WebRequest -Uri $edgeUrl -OutFile $DownloadPath  -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error downloading Microsoft Edge Enterprise from: $edgeUrl" -ForegroundColor Red
+    $Error
+}
+Write-Output "$ApplicationName downloaded to: $DownloadPath"

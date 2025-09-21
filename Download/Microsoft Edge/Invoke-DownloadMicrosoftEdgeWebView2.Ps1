@@ -5,16 +5,33 @@
     This script downloads the latest version of Microsoft Edge WebView2 and saves it to a specified directory.  
 .NOTES
     FileName:    Invoke-DownloadMicrosoftEdgeWebView2.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
+    Curent version: 1.0.0
+    Version:        1.0.0 - Initial version
+                    1.0.1 - Changed folder structure to support Developer, and some error handling
 
 #>
 
+# File and Folders
+$Application = "MicrosoftEdgeWebView2RuntimeInstallerX64.msi"
+$ApplicationFolderName = "Applications"
+$Developer = "Microsoft Corporation"
+$ApplicationName = "Microsoft Edge WebView2"
+$SystemDrive = $env:SystemDrive
+
 # Downloadfolder for Microsoft Edge WebView2
-$DownloadFolder = "C:\Applications\Microsoft Edge WebView2"
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
+
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {
-    New-Item -Path $DownloadFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $DownloadFolder"
+        $Error
+    }
+    
 }
 
 # Get the latest version of Microsoft Edge WebView2
@@ -29,23 +46,50 @@ Write-Output "Latest Stable WebView2 Version: $LatestVersion"
 # Version folder
 $VersionFolder = Join-Path $DownloadFolder $LatestVersion   
 If (!(Test-Path $VersionFolder)) {
-    New-Item -Path $VersionFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $VersionFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $VersionFolder"
+        $Error
+    }
 }
 
 # DownloadPath
-$InstallerName = "MicrosoftEdgeWebView2RuntimeInstallerX64.msi" 
-$DownloadPath = Join-Path $VersionFolder $InstallerName
+$DownloadPath = Join-Path $VersionFolder $Application
+
 # Check if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
-    Remove-Item $DownloadPath -Force
+    try {
+        Remove-Item $DownloadPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $DownloadPath"
+        $Error
+    }
 }
 
 # Check if installer already exists and delete if it does
 If (Test-Path $DownloadPath) {
-    Write-Output "Installer already exists at $DownloadPath"
-    Remove-Item $DownloadPath -Force
+    try {
+        Write-Output "Installer already exists at $DownloadPath"
+        Remove-Item $DownloadPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $DownloadPath"
+        $Error
+    }
+    
 }
 
 # Download URL for the installer
 $webviewUrl = $latestStable.Artifacts | Select-Object -ExpandProperty Location
-Invoke-WebRequest -Uri $webviewUrl -OutFile $DownloadPath
+# Download the installer
+try {
+    Invoke-WebRequest -Uri $webviewUrl -OutFile $DownloadPath  -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error downloading Microsoft Edge WebView2 from: $webviewUrl" -ForegroundColor Red
+    $Error
+}
+Write-Output "$ApplicationName downloaded to: $DownloadPath"    

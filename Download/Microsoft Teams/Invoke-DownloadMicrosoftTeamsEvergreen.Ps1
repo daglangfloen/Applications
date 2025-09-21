@@ -5,17 +5,32 @@
     This script downloads the latest version of Microsoft Teams Evergreen and saves it to a specified directory.
 .NOTES
     FileName:    Invoke-DownloadMicrosoftTeamsEvergreen.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
-
+    Curent version: 1.0.0
+    Version:        1.0.0 - Initial version
+                    1.0.1 - Changed folder structure to support Developer, and some error handling
+    
 #>
 
+# Folders
+$ApplicationFolderName = "Applications"
+$Developer = "Microsoft Corporation"
+$ApplicationName = "Microsoft Teams"
+$SystemDrive = $env:SystemDrive
+
 # Downloadfolder for Microsoft Teams Evergreen
-$DownloadFolder = "C:\Applications\Microsoft Teams"
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {
-    New-Item -Path $DownloadFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $DownloadFolder"
+        $Error
+    }
+    
 }
 
 # Download the latest Teams installer
@@ -25,11 +40,25 @@ $TeamsPath = Join-Path $DownloadFolder $TeamsInstaller
 
 # Check if file already exists and delete if it does
 If (Test-Path $TeamsPath) {
-    Remove-Item $TeamsPath -Force
+    try {
+        Remove-Item $TeamsPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $TeamsPath"
+        $Error
+    }
+    
 }
 
 # Download the installer
-Invoke-WebRequest -Uri $TeamsUrl -OutFile $TeamsPath
+try {
+    Invoke-WebRequest -Uri $TeamsUrl -OutFile $TeamsPath  -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error downloading Microsoft Teams from: $TeamsUrl" -ForegroundColor Red
+    $Error
+}
+
 
 # Get version info from the downloaded installer
 $version = (Get-Item $TeamsPath).VersionInfo.ProductVersion
@@ -38,8 +67,22 @@ Write-Output "Latest Teams Version: $version"
 # Create a folder with the version number
 $VersionFolder = Join-Path $DownloadFolder $version 
 If (!(Test-Path $VersionFolder)) {
-    New-Item -Path $DownloadFolder -Name $version -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -Name $version -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $VersionFolder"
+        $Error
+    }
+    
 }
 # Move the installer to the version folder
 $DestinationPath = Join-Path $VersionFolder $TeamsInstaller
-Move-Item -Path $TeamsPath -Destination $DestinationPath -Force
+try {
+    Move-Item -Path $TeamsPath -Destination $DestinationPath -Force -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error moving file to: $DestinationPath" -ForegroundColor Red
+    $Error
+}
+Write-Host "$ApplicationName downloaded to: $DestinationPath"

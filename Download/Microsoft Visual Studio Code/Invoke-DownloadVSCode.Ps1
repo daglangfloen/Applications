@@ -5,17 +5,31 @@
     This script downloads the latest version of Visual Studio Code and saves it to a specified directory.
 .NOTES
     FileName:    Invoke-DownloadVSCode.Ps1
-    Version:     1.0.0
     Author:      Dag Langfloen
+    Curent version: 1.0.0
+    Version:        1.0.0 - Initial version
+    
 
 #>
+# Folders
+$ApplicationFolderName = "Applications" 
+$Developer = "Microsoft Corporation"
+$ApplicationName = "Visual Studio Code"
+$SystemDrive = $env:SystemDrive
 
 # Downloadfolder for Visual Studio Code
-$DownloadFolder = "C:\Applications\Visual Studio Code"
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {
-    New-Item -Path $DownloadFolder -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $DownloadFolder"
+        $Error
+    }
+    
 }
 
 # Get the latest version of Visual Studio Code from GitHub API
@@ -26,7 +40,14 @@ Write-Host "Latest Visual Studio Code version: $latestVersion"
 # Create a folder with the version number
 $VersionFolder = Join-Path $DownloadFolder $latestVersion
 If (!(Test-Path $VersionFolder)) {
-    New-Item -Path $DownloadFolder -Name $latestVersion -ItemType Directory | Out-Null
+    try {
+        New-Item -Path $DownloadFolder -Name $latestVersion -ItemType Directory | Out-Null -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error creating folder: $VersionFolder"
+        $Error
+    }
+    
 }
 
 # Get the installer name
@@ -35,7 +56,14 @@ $DownloadPath = Join-Path $VersionFolder $ApplicationName
 
 # Check if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
-    Remove-Item $DownloadPath -Force
+    try {
+        Remove-Item $DownloadPath -Force -ErrorAction Stop    
+    }
+    catch {
+        Write-Host "Error deleting file: $DownloadPath"
+        $Error
+    }
+    
 }
 
 # Installer name
@@ -47,5 +75,11 @@ $DownloadPath = Join-Path $VersionFolder $InstallerName
 $installerUrl = "https://update.code.visualstudio.com/latest/win32-x64/stable"
 
 # Download the installer
-Invoke-WebRequest -Uri $installerUrl -OutFile $DownloadPath
+try {
+    Invoke-WebRequest -Uri $installerUrl -OutFile $DownloadPath -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error downloading Visual Studio Code from: $installerUrl" -ForegroundColor Red
+    $Error
+}
 Write-Host "Downloaded Visual Studio Code system installer to $DownloadPath"
