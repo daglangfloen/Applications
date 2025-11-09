@@ -109,3 +109,12 @@ catch {
     $Error
 }
 Write-Host ("File: {0} extracted to Path: {1}" -f $psadtDownloadUri, $VersionFolder) -ForegroundColor Green
+
+# Remove the zip file after extraction
+try {
+    Remove-Item $DownloadPath -Force -ErrorAction Stop    
+}
+catch {
+    Write-Host "Error deleting zip file: $DownloadPath" -ForegroundColor Red
+    $Error
+}
