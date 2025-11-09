@@ -34,7 +34,6 @@ If (!(Test-Path $DownloadFolder))
 # Find the latest 7-Zip version from the download page
 $VersionPattern = 'Download 7-Zip ([\d\.]+)'
 $LatestVersion = ($DownloadPage.Content | Select-String -Pattern $VersionPattern).Matches[0].Groups[1].Value
-
 Write-Host "Latest 7-Zip version: $LatestVersion"
 
 # Create a folder with the version number
@@ -54,8 +53,6 @@ $DownloadFolder = $VersionFolder
 
 # Removing the . in the version
 $VersionNoDots = $LatestVersion -replace '\.', ''
-
-# Downloadmatch = "a/7z$VersionNoDots-x64.exe"
 
 # Get the latest 7-Zip x64 installer URL from the official site
 $DownloadPage = Invoke-WebRequest -Uri "https://www.7-zip.org/download.html"
