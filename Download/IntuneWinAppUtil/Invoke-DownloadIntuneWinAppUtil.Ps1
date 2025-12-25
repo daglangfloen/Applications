@@ -37,7 +37,7 @@ $intuneWinAppUtilUri = "https://github.com/microsoft/Microsoft-Win32-Content-Pre
 $DownloadPath = Join-Path $DownloadFolder $File
 
 try {
-    Invoke-WebRequest -Uri $intuneWinAppUtilUri -OutFile $DownloadPath -ErrorAction Stop
+    Invoke-WebRequest -UseBasicParsing -Uri $intuneWinAppUtilUri -OutFile $DownloadPath -ErrorAction Stop
     Write-Host "IntuneWinAppUtil downloaded successfully to $DownloadPath" -ForegroundColor Green
 }
 catch {
@@ -51,7 +51,7 @@ $versionInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/microsoft/Mi
 $LatestVersion = $versionInfo.tag_name
 Write-Output "Latest IntuneWinAppUtil Version: $LatestVersion"
 
-# Create a folder with the version number
+# Create a folder with the version number if it doesn't exist
 $VersionFolder = Join-Path $DownloadFolder $LatestVersion
 If (!(Test-Path $VersionFolder)) {
     try {
@@ -63,7 +63,16 @@ If (!(Test-Path $VersionFolder)) {
     }
 }
 
-# Move the downloaded file to the version folder
+# Move the downloaded file to the version folder if not already there
 $VersionedDownloadPath = Join-Path $VersionFolder $File
-Move-Item -Path $DownloadPath -Destination $VersionedDownloadPath -ErrorAction Stop
-Write-Host "Moved IntuneWinAppUtil to version folder: $VersionedDownloadPath" -ForegroundColor Green
+try {
+    Move-Item -Path $DownloadPath -Destination $VersionedDownloadPath -ErrorAction Stop
+    Write-Host "IntuneWinAppUtil moved to version folder: $VersionedDownloadPath" -ForegroundColor Green    
+}
+catch {
+    Write-Host "Error moving IntuneWinAppUtil to version folder: $VersionedDownloadPath" -ForegroundColor Red
+    $Error
+    Remove-Item -Path $DownloadPath -Force -ErrorAction Stop
+}
+
+Write-Host "Script completed." -ForegroundColor Green
