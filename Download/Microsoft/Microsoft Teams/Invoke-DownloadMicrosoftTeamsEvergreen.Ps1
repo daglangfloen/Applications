@@ -52,7 +52,7 @@ If (Test-Path $TeamsPath) {
 
 # Download the installer
 try {
-    Invoke-WebRequest -Uri $TeamsUrl -OutFile $TeamsPath  -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $TeamsUrl -OutFile $TeamsPath  -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Microsoft Teams from: $TeamsUrl" -ForegroundColor Red

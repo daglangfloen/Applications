@@ -67,8 +67,9 @@ If (Test-Path $DownloadPath) {
 
 # Download the installer
 try {
-    Invoke-WebRequest -Uri "https://git-scm.com/download/win" -OutFile $DownloadPath -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri "https://git-scm.com/download/win" -OutFile $DownloadPath -ErrorAction Stop    
 }
+
 catch {
     Write-Host "Error downloading Git for Windows from: https://git-scm.com/download/win" -ForegroundColor Red
     $Error

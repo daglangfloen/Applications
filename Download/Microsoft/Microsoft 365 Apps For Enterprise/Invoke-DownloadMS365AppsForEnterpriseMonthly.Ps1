@@ -40,7 +40,7 @@ If (!(Test-Path $DownloadFolder)) {
 
 # Get the latest version of Microsoft 365 Apps For Enterprise Monthly from the XML feed
 $xmlUrl = "https://docs.microsoft.com/en-us/officeupdates/monthly-enterprise-channel"
-$page = Invoke-WebRequest -Uri $xmlUrl
+$page = Invoke-WebRequest -UseBasicParsing -Uri $xmlUrl
 $version = ($page.Content -split 'Version ')[1] -split '<' | Select-Object -First 1
 Write-Output "Latest Office Monthly Enterprise Channel Version: $version"
 # Split version into major, minor, build, revision
@@ -62,7 +62,7 @@ If (!(Test-Path $VersionFolder)) {
 
 # Find the lateest Office Deployment Tool
 $ODTUrl = "https://www.microsoft.com/en-us/download/details.aspx?id=49117"
-$ODTPage = Invoke-WebRequest -Uri $ODTUrl
+$ODTPage = Invoke-WebRequest -UseBasicParsing -Uri $ODTUrl
 $ODTLink = ($ODTPage.Links | Where-Object { $_.href -like "*.exe" } | Select-Object -First 1).href
 
 # Get the installer name from the url
@@ -99,7 +99,7 @@ If (Test-Path $ODTPath) {
 
 # Download the Office Deployment Tool installer
 try {
-    Invoke-WebRequest -Uri $ODTLink -OutFile $ODTPath -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $ODTLink -OutFile $ODTPath -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Office Deployment Tool from: $ODTLink" -ForegroundColor Red

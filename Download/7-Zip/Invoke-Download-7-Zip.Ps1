@@ -55,7 +55,7 @@ $DownloadFolder = $VersionFolder
 $VersionNoDots = $LatestVersion -replace '\.', ''
 
 # Get the latest 7-Zip x64 installer URL from the official site
-$DownloadPage = Invoke-WebRequest -Uri "https://www.7-zip.org/download.html"
+$DownloadPage = Invoke-WebRequest -UseBasicParsing -Uri "https://www.7-zip.org/download.html"
 $InstallerUrl = ($DownloadPage.Links | Where-Object {
     $_.href -match "a/7z$VersionNoDots-x64\.exe"
 }).href
@@ -76,5 +76,5 @@ If (Test-Path $DownloadPath) {
 }
 
 # Download the installer from the URL
-Invoke-WebRequest -Uri $InstallerUrl -OutFile $DownloadPath
+Invoke-WebRequest -UseBasicParsing -Uri $InstallerUrl -OutFile $DownloadPath
 Write-Host "7-Zip installer downloaded to: $DownloadPath"

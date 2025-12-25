@@ -83,7 +83,7 @@ If (Test-Path $DownloadPath) {
 
 # Download the installer
 try {
-    Invoke-WebRequest -Uri $downloadUrl -OutFile $DownloadPath -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $downloadUrl -OutFile $DownloadPath -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Notepad++ from: $downloadUrl" -ForegroundColor Red

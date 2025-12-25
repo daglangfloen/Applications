@@ -75,7 +75,7 @@ If (Test-Path $DownloadPath) {
 # Download URL for the installer
 $edgeUrl = $latestWindowsStable.Artifacts | Select-Object -ExpandProperty Location # "https://msedgedownloads.azureedge.net/enterprise/LATEST_STABLE/msedgeenterprise_x64.msi"
 try {
-    Invoke-WebRequest -Uri $edgeUrl -OutFile $DownloadPath  -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $edgeUrl -OutFile $DownloadPath  -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Microsoft Edge Enterprise from: $edgeUrl" -ForegroundColor Red

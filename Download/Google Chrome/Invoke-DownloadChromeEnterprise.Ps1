@@ -48,7 +48,7 @@ If (Test-Path $DownloadPath) {
 
 # Download the MSI installer (if not already downloaded)
 try {
-    Invoke-WebRequest -Uri $DownlloadUrl -OutFile $DownloadPath -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $DownlloadUrl -OutFile $DownloadPath -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Google Chrome Enterprise from: $DownlloadUrl" -ForegroundColor Red

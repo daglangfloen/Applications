@@ -90,7 +90,7 @@ If (Test-Path $DownloadPath) {
 
 ## Download to the file
 try {
-    Invoke-WebRequest -Uri $psadtDownloadUri -Out $DownloadPath -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $psadtDownloadUri -Out $DownloadPath -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading PSADT from: $psadtDownloadUri" -ForegroundColor Red

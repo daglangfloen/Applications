@@ -86,7 +86,7 @@ If (Test-Path $DownloadPath) {
 $webviewUrl = $latestStable.Artifacts | Select-Object -ExpandProperty Location
 # Download the installer
 try {
-    Invoke-WebRequest -Uri $webviewUrl -OutFile $DownloadPath  -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $webviewUrl -OutFile $DownloadPath  -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Microsoft Edge WebView2 from: $webviewUrl" -ForegroundColor Red

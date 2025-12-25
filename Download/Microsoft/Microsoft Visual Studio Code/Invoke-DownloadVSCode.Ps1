@@ -76,7 +76,7 @@ $installerUrl = "https://update.code.visualstudio.com/latest/win32-x64/stable"
 
 # Download the installer
 try {
-    Invoke-WebRequest -Uri $installerUrl -OutFile $DownloadPath -ErrorAction Stop    
+    Invoke-WebRequest -UseBasicParsing -Uri $installerUrl -OutFile $DownloadPath -ErrorAction Stop    
 }
 catch {
     Write-Host "Error downloading Visual Studio Code from: $installerUrl" -ForegroundColor Red
