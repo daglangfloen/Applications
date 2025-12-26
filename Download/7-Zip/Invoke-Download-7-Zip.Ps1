@@ -6,19 +6,22 @@
 .NOTES
     FileName:    Invoke-Download-7-Zip.Ps1
     Author:      Dag Langfloen
-    Curent version: 1.0.1
+    Curent version: 1.0.3
     Version:        1.0.0 - Initial version
-                    1.0.1 - Fixed Changed folder structure    
+                    1.0.1 - Fixed Changed folder structure   
+                    1.0.2 - Added -UseBasicParsing to Invoke-WebRequest
+                    1.0.3 - Changed folderstructiure for Downloads 
 
 #>
 
 # Folders 
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $ApplicationName = "7-Zip"
 $SystemDrive = $env:SystemDrive
 # DownloadFolder
-$ApplicationFolderPath = Join-Path $SystemDrive -ChildPath $ApplicationFolderName
-$DownloadFolder = Join-Path $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $ApplicationName
+$ApplicationFolderPath = Join-Path $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose
+$DownloadFolder = Join-Path $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $ApplicationName
 
 # Create the folder if it doesn't exist
 If (!(Test-Path $DownloadFolder))
@@ -30,6 +33,9 @@ If (!(Test-Path $DownloadFolder))
         $Error
     }
 }
+
+# Find the latest 7-Zip version from the download page
+$DownloadPage = Invoke-WebRequest -UseBasicParsing -Uri "https://www.7-zip.org/download.html"
 
 # Find the latest 7-Zip version from the download page
 $VersionPattern = 'Download 7-Zip ([\d\.]+)'
