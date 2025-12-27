@@ -8,17 +8,21 @@
     Author:      Dag Langfloen
     Curent version: 1.0.0
     Version:        1.0.0 - Initial version
+                    1.0.1 - Changed folder structure to support Developer, and some error handling
+                    1.0.2 - Added -UseBasicParsing to Invoke-WebRequest
+                    1.0.3 - Changed folderstructiure for Downloads
     
 
 #>
 # Folders
 $ApplicationFolderName = "Applications" 
+$Purpose = "Downloads"
 $Developer = "Microsoft Corporation"
 $ApplicationName = "Visual Studio Code"
 $SystemDrive = $env:SystemDrive
 
 # Downloadfolder for Visual Studio Code
-$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {

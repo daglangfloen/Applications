@@ -10,19 +10,22 @@
     Version:         1.0.0  - Initial version
                      1.0.1     - Changed folder structure
                      1.0.2     - Added error handling
+                     1.0.3     - Added -UseBasicParsing to Invoke-WebRequest
+                     1.0.4     - Changed folderstructiure for Downloads
     
 #>
 
 # File and Folders
 $Application = "MicrosoftEdgeEnterpriseX64.msi"
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $Developer = "Microsoft Corporation"
 $ApplicationName = "Microsoft Edge"
 $Channel = "Stable"
 $SystemDrive = $env:SystemDrive
 
 # Downloadfolder for Microsoft Edge
-$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {

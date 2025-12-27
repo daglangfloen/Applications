@@ -9,6 +9,8 @@
     Curent Version: 1.0.1
     Version:     1.0.0 - Initial version
     Version:     1.0.1 - Changed folder structure to support Developer, and some error handling
+    Version:     1.0.2 - Added -UseBasicParsing to Invoke-WebRequest
+    Version:     1.0.3 - Changed folderstructiure for Downloads
     
 
 #>
@@ -18,12 +20,13 @@ $scriptStartDir = Get-Location
 
 # Folders for Microsoft 365 Apps For Enterprise Monthly
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $Developer = "Microsoft Corporation"
 $MS365AppsFolderName = "Microsoft 365 Apps For Enterprise"
 $Channel = "Monthly Enterprise"
 $SystemDrive = $env:SystemDrive
 $ApplicationsFolder = Join-Path  $SystemDrive $ApplicationFolderName
-$MS365AppsFolder = Join-Path $ApplicationsFolder -ChildPath $Developer | Join-Path -ChildPath $MS365AppsFolderName
+$MS365AppsFolder = Join-Path $ApplicationsFolder -ChildPath $Purpose | Join-Path -ChildPath $Developer | Join-Path -ChildPath $MS365AppsFolderName
 $DownloadFolder = Join-Path $MS365AppsFolder $Channel
 
 # Create download folder if it doesn't exist
