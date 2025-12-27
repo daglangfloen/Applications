@@ -9,16 +9,19 @@
     Current Version: 1.0.0
     Version History:
         1.0.0 - Initial release
+        1.0.1 - Added -UseBasicParsing to Invoke-WebRequest
+        1.0.2 - Changed folderstructiure for Downloads
 #>
 
 # Folders
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $ApplicationName = "Brave Browser"  
 $Developer = "Brave"
 $SystemDrive = $env:SystemDrive
 
 # DownloadFolder
-$DownloadFolder = Join-Path $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
+$DownloadFolder = Join-Path $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {

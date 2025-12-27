@@ -8,16 +8,18 @@
     Author:      Dag Langfloen
     Version:     1.0.0
                  1.0.1 - Fixed Changed folder structure and added error handling
+                 1.0.2 - Added -UseBasicParsing to Invoke-WebRequest
+                 1.0.3 - Changed folderstructiure for Downloads
     
 #>
 
 # Folders
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $Developer = "Git"
 $ApplicationName = "Git for Windows"
 $SystemDrive = $env:SystemDrive
-$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
-
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {
     try {

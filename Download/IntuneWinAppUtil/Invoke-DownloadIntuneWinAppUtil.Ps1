@@ -8,17 +8,20 @@
     Author:      Dag Langfloen
     Curent version: 1.0.0
     Version:        1.0.0 - Initial version
+                    1.0.1 - Added -UseBasicParsing to Invoke-WebRequest
+                    1.0.2 - Changed folderstructiure for Downloads
 
 #>
 
 # Folders
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $ApplicationName = "IntuneWinAppUtil"
 $SystemDrive = $env:SystemDrive
 $File = "IntuneWinAppUtil.exe"
 
 # Downloadfolder for IntuneWinAppUtil
-$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $ApplicationName
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $ApplicationName
 
 # Create download folder if it doesn't exist
 If (!(Test-Path $DownloadFolder)) {

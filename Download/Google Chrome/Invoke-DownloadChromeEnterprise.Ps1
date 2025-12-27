@@ -7,17 +7,20 @@
     FileName:    Invoke-DownloadChromeEnterprise.Ps1
     Author:      Dag Langfloen
     Version:     1.0.0
+                 1.0.1 - Added -UseBasicParsing to Invoke-WebRequest
+                 1.0.2 - Changed folderstructiure for Downloads
     
 #>
 
 # File and Folders
 $Application = "GoogleChromeStandaloneEnterprise64.msi"
 $ApplicationFolderName = "Applications"
+$Purpose = "Downloads"
 $Developer = "Google"
 $ApplicationName = "Google Chrome Enterprise"
 $SystemDrive = $env:SystemDrive
 # DownloadFolder
-$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
+$DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Join-Path -ChildPath $Purpose | Join-Path -ChildPath $Developer | Join-Path -ChildPath $ApplicationName
 $DownloadPath = Join-Path $DownloadFolder $Application
 
 # URL to download the MSI installer
