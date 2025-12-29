@@ -11,6 +11,7 @@
                     1.0.1 - Fixed Changed folder structure   
                     1.0.2 - Added -UseBasicParsing to Invoke-WebRequest
                     1.0.3 - Changed folderstructiure for Downloads 
+                    1.0.4 - Changed from .exe to .msi installer
 
 #>
 
@@ -63,7 +64,7 @@ $VersionNoDots = $LatestVersion -replace '\.', ''
 # Get the latest 7-Zip x64 installer URL from the official site
 $DownloadPage = Invoke-WebRequest -UseBasicParsing -Uri "https://www.7-zip.org/download.html"
 $InstallerUrl = ($DownloadPage.Links | Where-Object {
-    $_.href -match "a/7z$VersionNoDots-x64\.exe"
+    $_.href -match "a/7z$VersionNoDots-x64\.msi"
 }).href
 
 # Prepend domain if needed
@@ -73,8 +74,8 @@ if ($InstallerUrl -notmatch "^https?://") {
 
 Write-Host "Latest 7-Zip x64 installer URL: $InstallerUrl"
 
-# DownloadPath
-$DownloadPath = Join-Path $DownloadFolder "7z$LatestVersion-x64.exe"
+# DownloadPath (MSI)
+$DownloadPath = Join-Path $DownloadFolder "7z$LatestVersion-x64.msi"
 
 # Test if file already exists and delete if it does
 If (Test-Path $DownloadPath) {
