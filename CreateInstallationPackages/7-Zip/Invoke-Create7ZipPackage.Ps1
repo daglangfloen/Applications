@@ -39,9 +39,6 @@ $DownloadFolder = Join-Path  $SystemDrive -ChildPath $ApplicationFolderName | Jo
 $LatestVersion = (Get-ChildItem $DownloadFolder | Sort-Object Name -Descending | Select-Object -First 1).Name
 Write-Host "Latest downloaded 7-Zip version: $LatestVersion"
 
-# SessionVariables
-$DeploymentType = $adtSession.DeploymentType
-
 # ShowADTInstallationWelcome 
 $OldShowADTInstallationWelcome = "Show-ADTInstallationProgress"
 $ShowADTInstallationWelcome = "Processing $AppName $LatestVersion"
