@@ -9,6 +9,7 @@
     Current version: 1.0.0
     Version History:
         1.0.0 - Initial version
+        1.0.1 - Added support for both MSI and EXE installers
 #>
 
 # Folders
@@ -60,6 +61,70 @@ If ($null -eq $DownloadedInstaller) {
 }
 $InstallerName = $DownloadedInstaller.Name
 Write-Host "Found downloaded installer: $InstallerName"
+
+# Original installation steps
+
+# PreInstallation step
+$OriginalPreInstallationStep = "## <Perform Pre-Installation tasks here>"
+
+# Installation step
+$OriginalInstallationStep = "## <Perform Installation tasks here>"
+
+# PostInstallation step
+$OriginalPostInstallationStep = "## <Perform Post-Installation tasks here>"
+
+# PreUninstallation step
+$OriginalPreUnInstallationStep = "## <Perform Pre-Uninstallation tasks here>"
+
+# Uninstallation step
+$OriginalUnInstallationStep = "## <Perform Uninstallation tasks here>"
+
+# If the installer has file extension .msi, set the installer type to MSI
+If ($InstallerName -like "*.msi") {
+    
+    # PreInstallation step
+    $NewPreInstallationStep = "## Pre-Installation tasks" 
+
+    # Installation step
+    $NewInstallationStep = "## Installation tasks 
+    Start-ADTMsiProcess -Action Install -FilePath '$InstallerName' -ArgumentList '$InstallArguments'"
+    
+    # PostInstallation step
+    $NewPostInstallationStep = "## Post-Installation tasks"
+
+    # PreUninstallation step
+    $NewPreUnInstallationStep = "## Pre-Uninstallation tasks"
+
+    # Uninstallation steps
+    $NewUnInstallationStep = "## Uninstallation tasks 
+   Start-ADTMsiProcess -Action Uninstall -FilePath '$InstallerName' -ArgumentList '$UnInstallArguments'"
+
+    # PostUninstallation step
+    $NewPostUnInstallationStep = "## Post-Uninstallation tasks"
+}
+Elseif ($InstallerName -like "*.exe") {
+    # PreInstallation step
+    $NewPreInstallationStep = "## Pre-Installation tasks" 
+
+    # Installation step
+    $NewInstallationStep = "## Installation tasks 
+    Start-ADTProcess -FilePath '$InstallerName' -ArgumentList '$InstallArguments'"
+    
+    # PostInstallation step
+    $NewPostInstallationStep = "## Post-Installation tasks"
+
+    # PreUninstallation step
+    $NewPreUnInstallationStep = "## Pre-Uninstallation tasks"
+
+    # Uninstallation steps
+    $NewUnInstallationStep = "## Uninstallation tasks 
+   Start-ADTProcess -FilePath '$InstallerName' -ArgumentList '$UnInstallArguments'"
+
+    # PostUninstallation step
+    $NewPostUnInstallationStep = "## Post-Uninstallation tasks"
+}
+
+
 
 # Downloaded installer path
 $InstallerPath = Join-Path -Path $DownloadFolder -ChildPath $LatestVersion | Join-Path -ChildPath $DownloadedInstaller.Name
@@ -150,13 +215,20 @@ $DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OldShowADT
 # ShowADTInstallationPrompt
 $DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OldShowADTInstallationPrompt), $NewShowADTInstallationPrompt
 
+# Set pre-installation step
+$DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OriginalPreInstallationStep), $NewPreInstallationStep
+
 # Set installation step
-$DeployScriptContent = $DeployScriptContent -replace "## <Perform Installation tasks here>", "## Installation tasks 
-    Start-ADTMsiProcess -Action Install -FilePath '$InstallerName' -ArgumentList '$InstallArguments'"
+$DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OriginalInstallationStep), $NewInstallationStep
+
+# Set post-installation step
+$DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OriginalPostInstallationStep), $NewPostInstallationStep
+
+# Set pre-uninstallation step
+$DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OriginalPreUnInstallationStep), $NewPreUnInstallationStep
 
 # Set uninstallation step
-$DeployScriptContent = $DeployScriptContent -replace "## <Perform Uninstallation tasks here", "## Uninstallation tasks
-   Start-ADTMsiProcess -Action Uninstall -FilePath '$InstallerName' -ArgumentList '$UnInstallArguments'#"
+$DeployScriptContent = $DeployScriptContent -replace [regex]::Escape($OriginalUnInstallationStep), $NewUnInstallationStep
 
 # Write the updated content back to the file
 Set-Content -Path $DeployScriptPath -Value $DeployScriptContent -Encoding UTF8
