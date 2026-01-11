@@ -6,10 +6,11 @@
 .NOTES
     FileName:    Invoke-Create7ZipPackage.Ps1
     Author:      Dag Langfloen
-    Current version: 1.0.0
+    Current version: 1.2
     Version History:
-        1.0.0 - Initial version
-        1.0.1 - Added support for both MSI and EXE installers
+        1.0 - Initial version
+        1.1 - Added support for both MSI and EXE installers
+        1.2 - Changed versioning og the script
 #>
 
 # Folders
