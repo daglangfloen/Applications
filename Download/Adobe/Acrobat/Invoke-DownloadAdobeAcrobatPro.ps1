@@ -6,11 +6,12 @@
 .NOTES
     Script Name: Invoke-DownloadAdobeAcrobatPro.ps1
     Author: Dag Langfloen
-    Current Version: 1.0.2
+    Current Version: 1.0.3
     Version History:
         1.0.0 - Initial release
         1.0.1 - Added -UseBasicParsing to Invoke-WebRequest
         1.0.2 - Changed folderstructiure for Downloads 
+        1.0.3 - Changed file version handling
 #>
 
 # Folders
@@ -106,9 +107,12 @@ catch {
     $Error
 }
 
+# Find the folder called Adobe Acrobat in the extracted folder
+$AdobeAcrobatFolder = Get-ChildItem -Path $DownloadFolder -Filter "Adobe Acrobat" -Recurse | Select-Object -First 1
+
 # Find the version number from the .msp file in the extracted folder
 Write-Host "Finding the  version number from the .msp file in: $DownloadFolder"
-$MspFile = Get-ChildItem -Path $DownloadFolder -Filter "*.msp" -Recurse | Select-Object -First 1
+$MspFile = Get-ChildItem -Path $AdobeAcrobatFolder.FullName -Filter "*.msp" -Recurse | Select-Object -First 1
 
 # Get the version from the .msp filename by removing the 15 first characters and the .msp extension
 $Version = $MspFile.BaseName.Substring(15)
